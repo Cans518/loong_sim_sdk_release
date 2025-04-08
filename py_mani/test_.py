@@ -16,12 +16,19 @@ sys.path.append("..")
 from sdk.loong_mani_sdk.loong_mani_sdk_udp import maniSdkCtrlDataClass, maniSdkClass, maniSdkSensDataClass
 import numpy as np
 
-ctrl=maniSdkCtrlDataClass()
-# sdk=maniSdkClass("192.168.1.201", 8003, 19, 6)
-sdk=maniSdkClass("0.0.0.0", 8003, 19, 6)
+jntNum=19
+armDof=7
+fingerDofLeft=6
+fingerDofRight=6
+neckDof=2
+lumbarDof=3
+
+ctrl=maniSdkCtrlDataClass(armDof, fingerDofLeft, fingerDofRight, neckDof, lumbarDof)
+# sdk=maniSdkClass("192.168.1.201", 8003, jntNum, fingerDofLeft, fingerDofRight)
+sdk=maniSdkClass("0.0.0.0", 8003, jntNum, fingerDofLeft, fingerDofRight)
 
 ctrl.inCharge  =1
-ctrl.filtLevel =4
+ctrl.filtLevel =1
 ctrl.armMode   =4
 ctrl.fingerMode=0
 ctrl.neckMode  =5
@@ -29,7 +36,8 @@ ctrl.lumbarMode=0
 ctrl.armCmd   =np.array([[0.4, 0.4, 0.1,   0,0,0,   0.5],
 						[0.2,-0.4, 0.1,   0,0,0,   0.5]],np.float32)
 ctrl.armFM    =np.zeros((2,6),np.float32)
-ctrl.fingerCmd=np.zeros((2,6),np.float32)
+ctrl.fingerLeft=np.zeros(fingerDofLeft, np.float32)
+ctrl.fingerRight=np.zeros(fingerDofRight, np.float32)
 ctrl.neckCmd  =np.zeros(2,np.float32)
 ctrl.lumbarCmd=np.zeros(3,np.float32)
 
@@ -37,9 +45,9 @@ ctrl.lumbarCmd=np.zeros(3,np.float32)
 dT=0.02
 tim=time.time()
 for i in range(1000):
-	ctrl.armCmd[0][0]+=0.02
-	ctrl.armCmd[0][2]+=0.02
-	ctrl.armCmd[1][0]+=0.02
+	ctrl.armCmd[0][0]=0.4 +0.1*np.sin(i*dT*2)
+	ctrl.armCmd[0][2]=0.1 +0.1*np.sin(i*dT*2)
+	ctrl.armCmd[1][0]=0.2 +0.1*np.sin(i*dT*2)
 	sdk.send(ctrl)
 	sens=sdk.recv()
 	sens.print()

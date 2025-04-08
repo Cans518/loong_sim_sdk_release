@@ -104,8 +104,8 @@ dis紧急停机（loco窗口进入free状态），必须须在free状态才可�
 1. 机器人上使能[en]（mani窗口自动进入idle）
 2. 复位[rc]（mani窗口进入rc，结束后自动进入idle）
 3. （可选）内嵌动作[act]（mani窗口进入act，按键151~159可任意控制）
-4. 外部操作[mani]（mani窗口进入mani，按键152开始响应、151停止响应）
-5. 运行maniSdk测试脚本即可操作上肢运动（示例py_mani/test.py）
+4. 外部操作[mani]（mani窗口进入mani）
+5. 运行maniSdk测试脚本即可操作上肢运动（按键152开始响应、151停止响应。示例py_mani/test.py）
 
 dis紧急停机（mani窗口进入free状态），必须须在free状态才可重新en上使能
 

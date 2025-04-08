@@ -18,7 +18,7 @@ Author: YYP
 	vecXf actJ,actW,actT;			//实际关节角度、角速度、扭矩[左臂+右臂+颈+腰]
 	vecXs drvTemp,drvState,drvErr;	//驱动器温度、状态字、错误码[左臂+右臂+颈+腰]
 	vecXf tgtJ,tgtW,tgtT;			//目标关节角度、角速度、扭矩[左臂+右臂+颈+腰]
-	vecXf actFingerJ,tgtFingerJ;	//手指角度[左+右]
+	vecXf actFingerLeft, actFingerRight, tgtFingerLeft,  tgtFingerRight;//手指角度
 	vec6f actTipPRpy2B[2],actTipVW2B[2],actTipFM2B[2];	//实际末端(tip)的pos、rpy to B系(body)； vel、omega； force、moment
 	vec6f tgtTipPRpy2B[2],tgtTipVW2B[2],tgtTipFM2B[2];	//目标末端(tip)的pos、rpy to B系(body)； vel、omega； force、moment
 命令：
@@ -42,7 +42,7 @@ import numpy as np
 
 
 class maniSdkSensDataClass:
-	def __init__(self,jntNum=19,fingerDof=6):
+	def __init__(self,jntNum,fingerDofLeft, fingerDofRight):
 		self.dataSize=np.zeros(1, np.int32)
 		self.timestamp=np.zeros(1, np.float64)
 		self.key=np.zeros(2, np.int16) #short
@@ -63,8 +63,10 @@ class maniSdkSensDataClass:
 		self.tgtW=np.zeros(jntNum, np.float32)
 		self.tgtT=np.zeros(jntNum, np.float32)
 
-		self.actFingerJ=np.zeros((2,fingerDof), np.float32)
-		self.tgtFingerJ=np.zeros((2,fingerDof), np.float32)
+		self.actFingerLeft=np.zeros(fingerDofLeft, np.float32)
+		self.actFingerRight=np.zeros(fingerDofRight, np.float32)
+		self.tgtFingerLeft=np.zeros(fingerDofLeft, np.float32)
+		self.tgtFingerRight=np.zeros(fingerDofRight, np.float32)
 
 		self.actTipPRpy2B=np.zeros((2,6), np.float32)
 		self.actTipVW2B  =np.zeros((2,6), np.float32)
@@ -78,7 +80,10 @@ class maniSdkSensDataClass:
 		self.__fmts.extend([f'{jntNum}f']*3)
 		self.__fmts.extend([f'{jntNum}h']*3)
 		self.__fmts.extend([f'{jntNum}f']*3)
-		self.__fmts.extend([f'{fingerDof*2}f']*2)
+		self.__fmts.extend([f'{fingerDofLeft}f'])
+		self.__fmts.extend([f'{fingerDofRight}f'])
+		self.__fmts.extend([f'{fingerDofLeft}f'])
+		self.__fmts.extend([f'{fingerDofRight}f'])
 		self.__fmts.extend(['12f']*6)
 
 		self.__fmtSizes=[]
@@ -97,9 +102,9 @@ class maniSdkSensDataClass:
 			print(it,'=',self.__dict__[it])
 
 class maniSdkCtrlDataClass:
-	def __init__(self, armDof=7, fingerDof=6, neckDof=2, lumbarDof=3):
+	def __init__(self, armDof, fingerDofLeft, fingerDofRight, neckDof, lumbarDof):
 		self.inCharge=  1	#short
-		self.filtLevel= 4	#short
+		self.filtLevel= 2	#short
 		self.armMode=   0	#short
 		self.fingerMode=0	#short
 		self.neckMode=  5	#short
@@ -110,24 +115,26 @@ class maniSdkCtrlDataClass:
 		if(self.armCmd.shape[1]!=armDof):
 			print('臂自由度不匹配！')
 			exit()
-		self.armFM=     np.zeros((2,6),np.float32)
-		self.fingerCmd= np.zeros((2,fingerDof),np.float32)
-		self.neckCmd=   np.zeros(neckDof,np.float32)
-		self.lumbarCmd= np.zeros(lumbarDof,np.float32)
+		self.armFM=      np.zeros((2,6),np.float32)
+		self.fingerLeft= np.zeros(fingerDofLeft, np.float32)
+		self.fingerRight=np.zeros(fingerDofRight, np.float32)
+		self.neckCmd=    np.zeros(neckDof,np.float32)
+		self.lumbarCmd=  np.zeros(lumbarDof,np.float32)
 
 		self.armDof=armDof
-		self.fingerDof=fingerDof
+		self.fingerDofLeft=fingerDofLeft
+		self.fingerDofRight=fingerDofRight
 		self.neckDof=neckDof
 		self.lumbarDof=lumbarDof
 
 
 class maniSdkClass:
-	def __init__(self, ip:str, port:int, jntNum=19,fingerDof=6):
+	def __init__(self, ip:str, port:int, jntNum, fingerDofLeft, fingerDofRight):
 		self.rbtIpPort=(ip,port)
 		self.sk=socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		self.sk.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 1)
 		self.sk.setblocking(0)
-		self.sens=maniSdkSensDataClass(jntNum, fingerDof)
+		self.sens=maniSdkSensDataClass(jntNum, fingerDofLeft, fingerDofRight)
 
 	def send(self,ctrl:maniSdkCtrlDataClass):
 		self.sk.sendto(self.packData(ctrl), self.rbtIpPort)
@@ -149,8 +156,6 @@ class maniSdkClass:
 			setattr(self.sens, keys[i], np.array(struct.unpack(fmts[i],buf[idx:idx+sizes[i]])))
 			idx+=sizes[i]
 		self.sens.planName =self.sens.planName.tobytes().decode('utf-8')
-		self.sens.actFingerJ =self.sens.actFingerJ.reshape((2,-1))
-		self.sens.tgtFingerJ =self.sens.tgtFingerJ.reshape((2,-1))
 		self.sens.actTipPRpy2B =self.sens.actTipPRpy2B.reshape((2,-1))
 		self.sens.actTipVW2B =self.sens.actTipVW2B.reshape((2,-1))
 		self.sens.actTipFM2B =self.sens.actTipFM2B.reshape((2,-1))
@@ -163,11 +168,12 @@ class maniSdkClass:
 								ctrl.fingerMode, ctrl.neckMode, ctrl.lumbarMode)
 		buf+=ctrl.armCmd.astype(dtype=np.float32).tobytes()
 		buf+=ctrl.armFM.astype(dtype=np.float32).tobytes()
-		buf+=ctrl.fingerCmd.astype(dtype=np.float32).tobytes()
+		buf+=ctrl.fingerLeft.astype(dtype=np.float32).tobytes()
+		buf+=ctrl.fingerRight.astype(dtype=np.float32).tobytes()
 		buf+=ctrl.neckCmd.astype(dtype=np.float32).tobytes()
 		buf+=ctrl.lumbarCmd.astype(dtype=np.float32).tobytes()
-		if(len(buf)!=184):
-			print("maniSdk cmd数据udp打包大小不匹配！",len(buf))
-			exit()
+		# if(len(buf)!=184):
+		# 	print("maniSdk cmd数据udp打包大小不匹配！",len(buf))
+		# 	exit()
 		return buf
 
