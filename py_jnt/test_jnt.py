@@ -33,7 +33,7 @@ elif(useUdp==1): # udp版，毫秒级延时，最高200hz
 	sdk.waitSens()
 
 
-ctrl=jntSdkCtrlDataClass(jntNum)
+ctrl=jntSdkCtrlDataClass(jntNum, fingerDofLeft, fingerDofRight)
 ctrl.reset()
 ctrl.filtRate=1
 ctrl.kp=np.array([

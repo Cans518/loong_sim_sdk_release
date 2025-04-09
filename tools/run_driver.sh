@@ -10,12 +10,16 @@
 password="   "
 
 
-echo run_driver.sh 将删除最近20个以外的log文件
-cd ../log
-files=$(ls -lt | tail -n +21 | awk '{print $9}')
-for file in $files; do
-	echo "$password"|sudo -S rm -f "$file"
-done
+if [ ! -e "../log" ]; then
+	mkdir ../log
+else
+	echo 将删除最近20个以外的log文件
+	cd ../log
+	files=$(ls -lt | tail -n +21 | awk '{print $9}')
+	for file in $files; do
+		echo "$password"|sudo -S rm -f "$file"
+	done
+fi
 echo ==========
 
 cd ../bin

@@ -30,7 +30,7 @@ sdk=maniSdkClass("0.0.0.0", 8003, jntNum, fingerDofLeft, fingerDofRight)
 ctrl.inCharge  =1
 ctrl.filtLevel =1
 ctrl.armMode   =4
-ctrl.fingerMode=0
+ctrl.fingerMode=3
 ctrl.neckMode  =5
 ctrl.lumbarMode=0
 ctrl.armCmd   =np.array([[0.4, 0.4, 0.1,   0,0,0,   0.5],
@@ -48,6 +48,8 @@ for i in range(1000):
 	ctrl.armCmd[0][0]=0.4 +0.1*np.sin(i*dT*2)
 	ctrl.armCmd[0][2]=0.1 +0.1*np.sin(i*dT*2)
 	ctrl.armCmd[1][0]=0.2 +0.1*np.sin(i*dT*2)
+	ctrl.fingerLeft[0]=40 +30*np.sin(i*dT)
+	ctrl.fingerRight[3]=40 +30*np.sin(i*dT)
 	sdk.send(ctrl)
 	sens=sdk.recv()
 	sens.print()

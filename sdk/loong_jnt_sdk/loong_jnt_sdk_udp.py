@@ -33,7 +33,7 @@ class jntSdkClass:
 		buf=ctrl.packData()
 		self.lib.setCtrl(buf)
 	def waitSens(self):
-		self.send(jntSdkCtrlDataClass())
+		self.send(jntSdkCtrlDataClass(31,1,1))
 		while(1):
 			time.sleep(0.5)
 			print("sdk等待连接...")
