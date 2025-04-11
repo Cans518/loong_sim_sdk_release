@@ -68,9 +68,19 @@ def setCmdV0(key):
     clearV()
     cmd[84]=key
 
+def butCmd():
+    root.focus_set()
+    tmp=entCmd.get()
+    if(len(tmp)>0):
+        cmd[84]=int(tmp)
+        print(tmp)
+
 
 #==键盘按键==
 def keyPress(ev):
+    if(entCmd==entCmd.focus_get()):
+        joyLabel["text"]="输入框占有焦点，键盘快捷键失效"
+        return
     global vx,vy,wz
     key=ev.keysym
     print(key)
@@ -114,48 +124,62 @@ else:
     else:
         root.geometry('1000x500+2600+200')
         length=100
-tk.Button(root,text='[230]\n清错',command=clearErr).place(anchor='nw',relx=0.1,rely=0,width=length,height=length)
-tk.Label(root,text="方括号数字是发送值,-数字是键盘").place(anchor='center',relx=0.5,rely=0.05)
 
+# ==系统 按键====
+tk.Label(root,text="系统:").place(anchor='nw',relx=0.02,rely=0.05)
+tk.Button(root,text='[230]\n清错',command=clearErr
+          ).place(anchor='nw',relx=0.1,rely=0,width=length,height=length)
+tips=['cctv介出', 'cctv介入',    '导航介出', '导航介入',   'mani介出', 'mani介入', 'mani自动',]
+keys=[200, 201,   204, 205,   220, 221, 222]
+for i in range(len(tips)):
+    tk.Button(root,text=f'[{keys[i]}]\n{tips[i]}',command=partial(setCmd, keys[i])
+              ).place(anchor='nw',relx=0.1*i+0.2, rely=0,width=length,height=length)
+
+# ==loco==
 tk.Label(root,text="loco:").place(anchor='nw',relx=0.02,rely=0.25)
-tk.Label(root,text="[6]start(键盘q)，[7]stop(键盘e)，键盘wasdjl模拟摇杆增量，空格清零",foreground='#888').place(anchor='nw',relx=0.25,rely=0.12)
 tips=['en','dis','idle','damp','rc','rl','jntSdk']
 keys=[1,13,3,12,2, 4,23]
 for i in range(len(tips)):
-    tk.Button(root,text=f'[{keys[i]}]\n{tips[i]}',command=partial(setCmd, keys[i])).place(anchor='nw',relx=0.1*i+0.1, rely=0.2,width=length,height=length)
+    tk.Button(root,text=f'[{keys[i]}]\n{tips[i]}',command=partial(setCmd, keys[i])
+              ).place(anchor='nw',relx=0.1*i+0.1, rely=0.2,width=length,height=length)
 
+# ==提示栏==
+tk.Label(root,text="[6]start(键盘q)，[7]stop(键盘e)，键盘wasdjl模拟摇杆增量，空格清零",foreground='#888'
+         ).place(anchor='nw',relx=0.05,rely=0.4)
+global joyLabel
+joyLabel=tk.Label(root,text="提示栏")
+joyLabel.place(anchor='nw',relx=0.05,rely=0.48)
 
+# ==输入框==
+entCmd=tk.Entry(root)
+entCmd.place(anchor='nw',relx=0.8,rely=0.45,width=length,height=length*0.6)
+tk.Button(root,text='send\n/转移焦点',command=butCmd
+          ).place(anchor='nw',relx=0.9,rely=0.4,width=length,height=length)
+
+# ==mani==
 tk.Label(root,text="mani:").place(anchor='nw',relx=0.02,rely=0.65)
 tips=['en','dis','idle','damp','rc','act','mani']
 keys=[1,13,112,113,114,115,116]
 for i in range(len(tips)):
-    tk.Button(root,text=f'[{keys[i]}]\n{tips[i]}',command=partial(setCmdV0, keys[i])).place(anchor='nw',relx=0.1*i+0.1, rely=0.6,width=length,height=length)
+    tk.Button(root,text=f'[{keys[i]}]\n{tips[i]}',command=partial(setCmdV0, keys[i])
+              ).place(anchor='nw',relx=0.1*i+0.1, rely=0.6,width=length,height=length)
 
-
-tips=['','暂停','启动','回正/遥操','抱拳/遥操','左抬/遥操','右抬/遥操','左挥/遥操','右挥/遥操','握拳/遥操','','','','','','','','','']
+tips=['','暂停','启动','回正/遥操','抱拳/遥操','左抬/遥操','右抬/遥操','左挥/遥操','右挥/遥操','握拳/遥操']
 for i in range(1,10):
-    tk.Button(root,text=f'[15{i}]\n{tips[i]}',command=partial(setCmd, 150+i)).place(anchor='nw',relx=0.1*i-0.1, rely=0.8,width=length,height=length)
+    tk.Button(root,text=f'[15{i}]\n{tips[i]}',command=partial(setCmd, 150+i)
+              ).place(anchor='nw',relx=0.1*i-0.1, rely=0.8,width=length,height=length)
 
 # ==自定义按键==
 
-def test55():
-    cmd[84]=55
-def test56():
-    cmd[84]=56
-tk.Button(root,text='[55]\n自定义',command=test55).place(anchor='nw',relx=0.1,rely=0.4,width=length,height=length)
-tk.Button(root,text='[56]\n自定义',command=test56).place(anchor='nw',relx=0.2,rely=0.4,width=length,height=length)
+# def test55():
+#     cmd[84]=55
+# def test56():
+#     cmd[84]=56
+# tk.Button(root,text='[55]\n自定义',command=test55).place(anchor='nw',relx=0.8,rely=0.2,width=length,height=length)
+# tk.Button(root,text='[56]\n自定义',command=test56).place(anchor='nw',relx=0.9,rely=0.2,width=length,height=length)
 
 
 
-
-
-
-
-
-
-global joyLabel
-joyLabel=tk.Label(root)
-joyLabel.place(anchor='nw',relx=0.5,rely=0.45)
 
 root.bind('<Key>',keyPress)
 # root.bind('<FocusIn>',focus)
