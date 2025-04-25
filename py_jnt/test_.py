@@ -10,9 +10,13 @@ Author: YYP
 ======================================================'''
 import numpy as np
 
-
-
-
 import platform
 print(platform.machine())
 print(platform.architecture())
+
+a=-1
+if(a):
+	b=3
+else:
+	b=5
+print(b)

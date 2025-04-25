@@ -8,7 +8,12 @@
 # ===================================================
 
 
+if [ "$(arch)" = "x86_64" ]; then
+	tgtArch=x64
+else
+	tgtArch="a64"
+fi
 cd ../bin
 
-./loong_share_sim
+./loong_share_sim_$tgtArch
 

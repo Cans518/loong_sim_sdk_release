@@ -23,8 +23,15 @@ else
 fi
 echo ==========
 
+if [ "$(arch)" = "x86_64" ]; then
+	tgtArch=x64
+else
+	tgtArch="a64"
+fi
+
 cd ../bin
-echo "$password"|sudo -S ./loong_locomotion |sudo tee ../log/terminal_loco.txt
+
+echo "$password"|sudo -S ./loong_locomotion_$tgtArch |sudo tee ../log/terminal_loco.txt
 
 
 

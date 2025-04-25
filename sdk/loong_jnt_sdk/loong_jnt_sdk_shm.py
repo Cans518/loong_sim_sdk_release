@@ -23,9 +23,9 @@ class jntSdkClass:
 			exit()
 		path=os.path.dirname(__file__)
 		if(platform.machine()=="x86_64" or platform.machine()=="amd64"):
-			self.lib=ctypes.CDLL(path+'/x64/libloong_jnt_sdk_shm.so')
+			self.lib=ctypes.CDLL(path+'/lib/libloong_jnt_sdk_shm_x64.so')
 		else:
-			self.lib=ctypes.CDLL(path+'/a64/libloong_jnt_sdk_shm.so')
+			self.lib=ctypes.CDLL(path+'/lib/libloong_jnt_sdk_shm_a64.so')
 		self.lib.initShmMode()
 		self.libCtrlDataSize=self.lib.getCtrlDataSize()
 		self.libSensDataSize=self.lib.getSensDataSize()

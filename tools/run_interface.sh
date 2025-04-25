@@ -20,5 +20,13 @@ else
 	done
 fi
 echo ==========
+if [ "$(arch)" = "x86_64" ]; then
+	tgtArch=x64
+else
+	tgtArch="a64"
+fi
+
 cd ../bin
-echo "$password"|sudo -S ./loong_interface |sudo tee ../log/terminal_interface.txt
+
+echo "$password"|sudo -S ./loong_interface_$tgtArch |sudo tee ../log/terminal_interface.txt
+

@@ -21,9 +21,9 @@ class jntSdkClass:
 	def __init__(self, ip:str, port:int, jntNum, fingerDofLeft, fingerDofRight):
 		path=os.path.dirname(__file__)
 		if(platform.machine()=="x86_64" or platform.machine()=="amd64"):
-			self.lib=ctypes.CDLL(path+'/x64/libloong_jnt_sdk_udp.so')
+			self.lib=ctypes.CDLL(path+'/lib/libloong_jnt_sdk_udp_x64.so')
 		else:
-			self.lib=ctypes.CDLL(path+'/a64/libloong_jnt_sdk_udp.so')
+			self.lib=ctypes.CDLL(path+'/lib/libloong_jnt_sdk_udp_a64.so')
 		self.lib.initUdpMode(bytes(ip.encode()), ctypes.c_int(port))
 
 		self.sens=jntSdkSensDataClass(jntNum, fingerDofLeft, fingerDofRight)
