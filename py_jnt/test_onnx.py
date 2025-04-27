@@ -13,7 +13,7 @@ import time
 import numpy as np
 import sys
 import os
-os.chdir(os.path.dirname(__file__))
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append("..")
 from sdk.loong_jnt_sdk.loong_jnt_sdk_datas import jntSdkSensDataClass, jntSdkCtrlDataClass
 

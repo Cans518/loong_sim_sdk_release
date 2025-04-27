@@ -21,7 +21,7 @@ class jntSdkClass:
 		if(os.path.exists('../config/driver.ini')==0):
 			print("共享内存版需匹配当前所在目录层级，保证可以按 ../config/driver.ini 路径访问")
 			exit()
-		path=os.path.dirname(__file__)
+		path=os.path.dirname(os.path.abspath(__file__))
 		if(platform.machine()=="x86_64" or platform.machine()=="amd64"):
 			self.lib=ctypes.CDLL(path+'/lib/libloong_jnt_sdk_shm_x64.so')
 		else:

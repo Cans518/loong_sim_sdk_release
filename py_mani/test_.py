@@ -11,7 +11,7 @@ Author: YYP
 import time
 import sys
 import os
-os.chdir(os.path.dirname(__file__))
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append("..")
 from sdk.loong_mani_sdk.loong_mani_sdk_udp import maniSdkCtrlDataClass, maniSdkClass, maniSdkSensDataClass
 import numpy as np

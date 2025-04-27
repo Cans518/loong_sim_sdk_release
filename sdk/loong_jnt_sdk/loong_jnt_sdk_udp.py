@@ -19,7 +19,7 @@ from loong_jnt_sdk_datas import jntSdkSensDataClass, jntSdkCtrlDataClass
 # ===========================
 class jntSdkClass:
 	def __init__(self, ip:str, port:int, jntNum, fingerDofLeft, fingerDofRight):
-		path=os.path.dirname(__file__)
+		path=os.path.dirname(os.path.abspath(__file__))
 		if(platform.machine()=="x86_64" or platform.machine()=="amd64"):
 			self.lib=ctypes.CDLL(path+'/lib/libloong_jnt_sdk_udp_x64.so')
 		else:
