@@ -21,7 +21,7 @@ jntNum=31
 fingerDofLeft=6
 fingerDofRight=6
 
-useUdp=0  # 0=共享内存  1=udp
+useUdp=2  # 0=共享内存  1=udp   2=纯Python版udp
 
 if(useUdp==0):   # 共享内存版，仅可本机运行，亚毫秒级延迟，最高1khz，且需匹配目录层级（父级含config目录），否则报错！！
 	from sdk.loong_jnt_sdk.loong_jnt_sdk_shm import jntSdkClass
@@ -30,12 +30,15 @@ elif(useUdp==1): # udp版，毫秒级延时，最高200hz
 	from sdk.loong_jnt_sdk.loong_jnt_sdk_udp import jntSdkClass
 	sdk=jntSdkClass('0.0.0.0',8006, jntNum, fingerDofLeft, fingerDofRight)
 	sdk.waitSens()
+elif(useUdp==2): # 纯Python版，毫秒级延时，最高200hz
+	from sdk.loong_jnt_sdk.loong_jnt_sdk_udp2 import jntSdkClass
+	sdk=jntSdkClass('172.18.175.239',8006, jntNum, fingerDofLeft, fingerDofRight)
+	sdk.waitSens()
 
 
 # ===测试onnx，以下测试二选一，功能一致
 from onnx_runner_yyp import onnxRunnerClass #偏数组角标访问风格，便于后期cpp迁移
 # from onnx_runner_lq import onnxRunnerClass  #偏对象打包风格，py环境运行效率高
-# ===
 onnx=onnxRunnerClass("../model/onnx/policy_3052.onnx")
 
 
